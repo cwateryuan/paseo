@@ -4,14 +4,19 @@
 
 Controlled by `APP_VARIANT` in `packages/app/app.config.js` (vanilla Expo, no custom Gradle plugin):
 
-| Variant       | App name    | Package ID       |
-| ------------- | ----------- | ---------------- |
-| `production`  | Paseo       | `sh.paseo`       |
-| `development` | Paseo Debug | `sh.paseo.debug` |
+| Variant       | App name     | Package ID        |
+| ------------- | ------------ | ----------------- |
+| `production`  | Paseo        | `sh.paseo`        |
+| `development` | Paseo Debug  | `sh.paseo.debug`  |
+| `tablet`      | Paseo 平板版 | `sh.paseo.tablet` |
 
 EAS profiles: `development`, `production`, and `production-apk` in `packages/app/eas.json`.
 
 `development` uses Android `debug`.
+
+`tablet` is a local Android release variant. It follows system rotation and hides both system
+bars; swipe from an edge to reveal them temporarily. Its separate package and `paseo-tablet`
+URL scheme let it coexist with the official app. Pair it with your host separately.
 
 ## Version codes
 
@@ -29,7 +34,7 @@ The formula reserves three digits each for minor and patch. If either reaches `1
 
 ## Prerequisites (local dev)
 
-Local Android builds run on macOS (or Linux) and need the Android toolchain, pinned in `.tool-versions` (`java 21`, `android-sdk 21.0`) and wired up by `.mise.toml` (which derives `ANDROID_HOME` and the command-line tool paths from the `android-sdk` entry). With [mise](https://mise.jdx.dev):
+Local Android builds need the Android toolchain, pinned in `.tool-versions` (`java 21`, `android-sdk 21.0`) and wired up by `.mise.toml` (which derives `ANDROID_HOME` and the command-line tool paths from the `android-sdk` entry). On Windows, set `JAVA_HOME`, `ANDROID_HOME`, and add Java's `bin` directory to `PATH`; the APK script uses `gradlew.bat`. With [mise](https://mise.jdx.dev):
 
 ```bash
 mise install        # java 21 + android-sdk 21.0 command-line tools
@@ -82,6 +87,7 @@ From repo root:
 ```bash
 npm run build:apk       # Universal dogfood APK: 32/64-bit ARM and x86
 npm run build:apk:arm64 # Smaller dogfood APK for ARM64 phones
+npm run build:apk:tablet # Standalone ARM64 tablet APK
 npm run dev:android     # Build/install the debug app and start development
 npm run dev:ios         # Build/install the iOS development app
 ```
@@ -93,6 +99,11 @@ flag. These builds keep the production package ID (`sh.paseo`) and release optim
 personal dogfooding. Android system-trace spans require the separate `PASEO_PROFILE_BUILD=1` flag;
 watchdog recording does not send duplicate spans to that sink by default. Normal store/release
 workflows leave diagnostics disabled.
+
+`build:apk:tablet` writes `artifacts/paseo-tablet-arm64.apk` with the same release optimizations
+and diagnostics. It signs with a local key under `.dev/android-signing/`. Back up that directory
+privately: subsequent APKs need the same key to update an installed tablet build. Never commit
+the key or its password file.
 
 The older `android`, `android:development`, and `ios` commands remain aliases for development.
 `android:production` still builds and installs a release through Expo; use `build:apk` when you

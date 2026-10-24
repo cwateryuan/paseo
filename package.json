@@ -51,6 +51,7 @@
     "build": "npm run build --workspaces --if-present",
     "build:apk": "node scripts/build-apk.mjs",
     "build:apk:arm64": "node scripts/build-apk.mjs arm64",
+    "build:apk:tablet": "node scripts/build-apk.mjs arm64 tablet",
     "build:highlight": "npm run build --workspace=@getpaseo/highlight",
     "build:highlight:clean": "npm run build:clean --workspace=@getpaseo/highlight",
     "build:plugin": "npm run build --workspace=@getpaseo/plugin",

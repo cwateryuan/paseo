@@ -9,6 +9,7 @@ const withPasteInput = require("./plugins/with-paste-input");
 const withAndroidScroll = require("./modules/paseo-scroll/app.plugin");
 const { getNativeReleaseVersion } = require("./native-release-version");
 const appVariant = process.env.APP_VARIANT ?? "production";
+const isTabletBuild = appVariant === "tablet";
 const isFdroidBuild = process.env.PASEO_FDROID_BUILD === "1";
 const isWatchdogBuild = process.env.PASEO_WATCHDOG_BUILD === "1";
 const isProfileBuild = process.env.PASEO_PROFILE_BUILD === "1";
@@ -68,6 +69,10 @@ function resolveSecretFile(params) {
 }
 
 const variants = {
+  tablet: {
+    name: "Paseo 平板版",
+    packageId: "sh.paseo.tablet",
+  },
   production: {
     name: "Paseo",
     packageId: "sh.paseo",
@@ -102,9 +107,9 @@ export default {
     name: variant.name,
     slug: "voice-mobile",
     version: nativeReleaseVersion.appVersion,
-    orientation: "portrait",
+    orientation: isTabletBuild ? "default" : "portrait",
     icon: "./assets/images/icon.png",
-    scheme: "paseo",
+    scheme: isTabletBuild ? "paseo-tablet" : "paseo",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
     ios: {
@@ -190,6 +195,7 @@ export default {
       autolinkingModuleResolution: true,
     },
     extra: {
+      tabletFullscreen: isTabletBuild,
       fdroidBuild: isFdroidBuild,
       profileBuild: isProfileBuild,
       watchdogBuild: isWatchdogBuild,

@@ -5,3 +5,5 @@ export const isFdroidBuild = Constants.expoConfig?.extra?.fdroidBuild === true;
 
 /** Production-like Android build with local profiling enabled. */
 export const isProfileBuild = Constants.expoConfig?.extra?.profileBuild === true;
+
+export const isTabletFullscreenBuild = Constants.expoConfig?.extra?.tabletFullscreen === true;
